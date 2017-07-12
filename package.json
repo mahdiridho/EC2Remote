@@ -1,0 +1,32 @@
+{
+  "name": "ec2remote",
+  "version": "1.0.0",
+  "description": "Web client to remote AWS EC2 using VNC service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahdiridho/EC2Remote.git"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.7.28",
+    "gulp": "^3.9.1",
+    "gulp-server-livereload": "^1.9.2",
+    "q": "^1.4.1"
+  },
+  "keywords": [
+    "AWS",
+    "EC2",
+    "Remote",
+    "VNC",
+    "NoVNC"
+  ],
+  "author": "Mahdi Ridho",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mahdiridho/EC2Remote/issues"
+  },
+  "homepage": "https://github.com/mahdiridho/EC2Remote#readme"
+}
