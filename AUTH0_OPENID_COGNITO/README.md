@@ -40,6 +40,4 @@ If we will add new Auth Client ID to the same OpenID Identity, it will use class
 
 [[ http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html | Obtaining the Thumbprint for an OpenID Connect Identity Provider ]]
 
-Lets check the simple Thumbprint generator in CLI :
-
-[[ http://developer.flatmax.org/rBABYLONCOMMdc7d15b2b9b6c98de3b1be7d78968d20dd859bad | Generate new Thumbprint certificate by CLI ]]
+The simple way to create new OpenID Connect provider is from AWS IAM Console - Identity Providers
