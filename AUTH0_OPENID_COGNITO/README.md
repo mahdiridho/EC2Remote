@@ -30,14 +30,14 @@ On **Use Auth0 instead of the IdP to do Single Sign On**, it can be enabled or d
 
 Next, we will create new AWS OpenID Connect and register the above Auth0 client as audience using class IAM createOpenIDConnectProvider :
 
-[[ http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IAM.html#createOpenIDConnectProvider-property | Create New OpenID Connect and register new Auth Client ID ]]
+[Create New OpenID Connect and register new Auth Client ID](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IAM.html#createOpenIDConnectProvider-property)
 
 If we will add new Auth Client ID to the same OpenID Identity, it will use class IAM addClientIDToOpenIDConnectProvider :
 
-[[ http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IAM.html#addClientIDToOpenIDConnectProvider-property | Add new Auth Client ID to existing OpenID ]]
+[Add new Auth Client ID to existing OpenID](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/IAM.html#addClientIDToOpenIDConnectProvider-property)
 
 > When create new OpenID Connect, it needs Thumbprint certificate on the parameter. How to generate new Thumbprint certificate can be read on the link below :
 
-[[ http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html | Obtaining the Thumbprint for an OpenID Connect Identity Provider ]]
+[Obtaining the Thumbprint for an OpenID Connect Identity Provider](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_oidc_verify-thumbprint.html)
 
 The simple way to create new OpenID Connect provider is from AWS IAM Console - Identity Providers
