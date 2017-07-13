@@ -44,7 +44,10 @@ $ ./delete.js <prefix_name>
 Before run, some contents in both files need to change base on yours :
 
 * YOUR_CREDENTIAL_PROFILE : credential profile you have set above
-* YOUR_OPENID_CONNECT_ARN : OpenID Arn can be found on AWS IAM - Identity providers - click your provider name. The sample Arn will be like i.e arn:aws:iam::5199957xxxxx:oidc-provider/<PROVIDER_DOMAIN>
+* YOUR_OPENID_CONNECT_ARN : OpenID Arn can be found on AWS IAM - Identity providers - click your provider name. The sample Arn will be like i.e arn:aws:iam::5199957xxxxx:oidc-provider/<PROVIDER_DOMAIN>.
+
+Please read the reference to configure OpenID with Auth0 on folder AUTH0_OPENID_COGNITO
+
 * FREE_KEY_NAME / YOUR_KEY_NAME : keypair name for ec2
 * FREE_TAG_KEY_NAME : tag name
 * FREE_TAG_VALUE_NAME : tag value
