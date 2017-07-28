@@ -32,5 +32,5 @@ Thumbs.db
 node_modules/
 .sass-cache
 *.css.map
-webapp/bower_components/
+app/bower_components/
 noVNC/
