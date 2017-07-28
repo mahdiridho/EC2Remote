@@ -1,0 +1,53 @@
+    <dom-module id="index-view">
+      <template>
+        <iron-location path="{{path}}"></iron-location>
+        <iron-pages selected="{{defaultPage}}">
+          <div>
+            <flatmax-login 
+              client-id="PNGweNabHkQkDzxIwt4jzGHVSNmUQCyR" 
+              url-id="mahdiridho.auth0.com" 
+              pool-id="ap-northeast-1:571e84ee-4fd7-4431-930b-78b43edb2297" 
+              container="hit-login-container" 
+              token-storage="id_token" 
+              profile-storage="profile" 
+              on-success="_success" 
+              on-error="_error">
+            </flatmax-login>
+          </div>
+          <div>
+              <home-view id="home"></home-view>
+          </div>
+        </iron-pages>
+      </template>
+      <script>
+        class IndexView extends Polymer.Element {
+          static get is() { return 'index-view'; }
+
+          // Declare properties for the element's public API
+          static get properties() {
+            return {
+              defaultPage: {
+                type: Number,
+                value: 0
+              }
+            }
+          }
+          ready() {
+            super.ready();
+            if(!AWS.config.credentials && this.path!="/")
+              window.location.href = "/";
+          }
+          _success() {
+            GLOBAL_AUTH.hide();
+            document.getElementById("hit-login-container").style.visibility="hidden";
+            console.log("Credential ID : "+AWS.config.credentials.identityId);
+            this.set('defaultPage', 1);
+            this.$.home._routePageChanged("vnc");
+          }
+          _error(e){
+            this.$.home._logout();
+          }
+        }
+        customElements.define(IndexView.is, IndexView);
+      </script>
+    </dom-module>

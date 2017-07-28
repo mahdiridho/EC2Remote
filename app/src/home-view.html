@@ -1,0 +1,136 @@
+<dom-module id="home-view">
+  <template>
+    <style>
+      :host {
+        --app-primary-color: #4285f4;
+        --app-secondary-color: black;
+        display: block;
+      }
+
+      app-drawer-layout:not([narrow]) [drawer-toggle] {
+        display: none;
+      }
+
+      app-header {
+        color: #fff;
+        background-color: var(--app-primary-color);
+      }
+
+      app-header paper-icon-button {
+        --paper-icon-button-ink-color: white;
+      }
+
+      .drawer-list {
+        margin: 0 20px;
+      }
+
+      .drawer-list a {
+        display: block;
+        padding: 0 16px;
+        text-decoration: none;
+        color: var(--app-secondary-color);
+        line-height: 40px;
+      }
+
+      .drawer-list a.iron-selected {
+        color: black;
+        font-weight: bold;
+      }
+    </style>
+
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        route="{{route}}"
+        pattern="/:page"
+        data="{{routeData}}"
+        tail="{{subroute}}"></app-route>
+
+    <app-drawer-layout fullbleed>
+      <!-- Drawer content -->
+      <app-drawer id="drawer" slot="drawer">
+        <app-toolbar>Menu</app-toolbar>
+        <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
+          <a name="logout" href="#" on-tap="_logout">Logout</a>
+        </iron-selector>
+      </app-drawer>
+
+      <!-- Main content -->
+      <app-header-layout has-scrolling-region>
+        <app-header slot="header" condenses reveals effects="waterfall">
+          <app-toolbar>
+            <paper-icon-button icon="my-icons:menu" drawer-toggle></paper-icon-button>
+            <div main-title>EC2 Remote</div>
+          </app-toolbar>
+        </app-header>
+        <iron-pages
+            selected="[[page]]"
+            attr-for-selected="name"
+            fallback-selection="view404"
+            role="main">
+          <vnc-view id="vnc" name="vnc"></vnc-view>
+          <view404-view name="view404"></view404-view>
+        </iron-pages>
+      </app-header-layout>
+    </app-drawer-layout>
+  </template>
+
+  <script>
+    class HomeView extends Polymer.Element {
+
+      static get is() { return 'home-view'; }
+
+      static get properties() {
+        return {
+          page: {
+            type: String,
+            reflectToAttribute: true,
+            observer: '_pageChanged',
+          }
+        }
+      }
+
+/*      static get observers() {
+        return [
+          '_routePageChanged(routeData.page)'
+        ];
+      }*/
+
+      _routePageChanged(page){
+        console.log(page);
+        if (page === undefined || page === null || !page){
+          console.log("Page : "+page);
+          return;
+        }
+        if(AWS.config.credentials){
+          console.log("Credential : "+AWS.config.credentials.identityId);
+          profile=JSON.parse(localStorage.getItem('profile'));
+          this.page=page;
+          this.set("route.path","/vnc");
+        }
+      }
+
+      _pageChanged(page) {
+        // Load page import on demand. Show 404 page if fails
+        var resolvedPageUrl = this.resolveUrl(page + '-view.html');
+        Polymer.importHref(
+            resolvedPageUrl,
+            null,
+            this._showPage404.bind(this),
+            true);
+      }
+
+      _showPage404() {
+        this.page = 'view404';
+      }
+
+      _logout(){
+        AWS.config.credentials.clearCachedId();
+        localStorage.removeItem('id_token');
+        localStorage.removeItem('profile');
+        window.location.href = "/";
+      }
+    }
+
+    window.customElements.define(HomeView.is, HomeView);
+  </script>
+</dom-module>

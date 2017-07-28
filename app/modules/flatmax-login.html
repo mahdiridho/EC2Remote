@@ -1,0 +1,127 @@
+<!-- 
+Component object for user authentication and authorized
+http://developer.flatmax.org/source/Flatmax/
+
+Copyright 2017 Flatmax Pty Ltd
+Released under the Flatmax license
+ -->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<style>
+  .auth0-lock-header-bg {
+    background-color: #333 !important;
+  }
+  .auth0-lock-header {
+    color: #fff !important;
+  }
+</style>
+<dom-module id="flatmax-login">
+  <script>
+    var GLOBAL_AUTH;
+    class FlatmaxLogin extends Polymer.Element {
+      static get is() { return 'flatmax-login'; }
+
+      // Declare properties for the element's public API
+      static get properties() {
+        return {
+          authOptions : {
+            type: Object,
+            value: {
+              rememberLastLogin: false,
+              loginAfterSignUp: false,
+              socialBigButtons: false,
+              auth: {
+                  params: { prompt: 'select_account' }
+              },
+              sso: false,
+              languageDictionary: {
+                title: "Log me in"
+              },
+              autoclose: true,
+              closable: false
+            }
+          },
+          container: {type: String},
+          loginLogo: {type: String},
+          loginColor: {type: String},
+          tokenStorage: {type: String, value: "id_token"},
+          profileStorage: {type: String, value: "profile"},
+          clientId: {type: String, value: null},
+          urlId: {type: String, value: null},
+          poolId: {type: String, value: null}
+        }
+      }
+
+      /* Call auth0 API to get authentication and token */
+      connectedCallback() {
+        super.connectedCallback();
+        AWS.config.region="ap-northeast-1";
+        let self=this;
+        this.authOptions.container = this.container;
+        this.authOptions.theme = {
+          logo: this.loginLogo,
+          primaryColor: this.loginColor
+        }
+
+        GLOBAL_AUTH = new Auth0Lock(this.clientId, this.urlId, this.authOptions);
+        if(localStorage.getItem(this.profileStorage)){
+          var checkLS=JSON.parse(localStorage.getItem(this.profileStorage));
+          var lsExpire = new Date().getTime() - checkLS.timeout;
+          if(lsExpire>=86400000){
+            if(AWS.config.credentials)
+              AWS.config.credentials.clearCachedId();
+            localStorage.removeItem(this.tokenStorage);
+            localStorage.removeItem(this.profileStorage);
+            window.location.href = "/";
+          }else{
+            this.getCredential();
+          }
+        }else{
+          GLOBAL_AUTH.show();
+          GLOBAL_AUTH.on("authenticated", function(authResult) {
+            GLOBAL_AUTH.getProfile(authResult.idToken, function(error, profile) {
+              if (error) {
+                // Handle error
+                return;
+              }
+              if(profile.identities[0].connection==="twitter")
+                profile.email=profile.nickname;
+              else if(profile.identities[0].connection==="Username-Password-Authentication"){
+                if(!profile.email_verified){
+                  alert("Please verify your email!");
+                  return;
+                }
+              }
+              profile.timeout=new Date().getTime();
+              localStorage.setItem(self.tokenStorage, authResult.idToken);
+              localStorage.setItem(self.profileStorage, JSON.stringify(profile));
+              self.getCredential();
+            });
+          });
+        }
+      }
+
+      /* Associated the auth0 token to cognito identity pool to get authorized credential */
+      getCredential() {
+        var self=this,cognitoParam = {
+          'IdentityPoolId': this.poolId,
+          'Logins': null
+        };
+        eval("cognitoParam.Logins={'"+this.urlId+"': '"+localStorage.getItem(this.tokenStorage)+"'}");
+        AWS.config.credentials=new AWS.CognitoIdentityCredentials(cognitoParam);
+        AWS.config.credentials.get(function(err) {
+          if (err) {
+            AWS.config.credentials.clearCachedId();
+            localStorage.removeItem(this.tokenStorage);
+            localStorage.removeItem(this.profileStorage);
+            self.dispatchEvent(new CustomEvent('error',{detail:{error:err}}));
+          }else{
+            self.dispatchEvent(new CustomEvent("success"));
+          }
+        });
+      }
+    }
+    customElements.define(FlatmaxLogin.is, FlatmaxLogin);
+  </script>
+</dom-module>
