@@ -35,11 +35,11 @@ $ ./setup.sh
 
 Go to the directory "devOps" and Prepare services, roles, and policies, run the command :
 
-$ ./create.js <prefix_name>
+$ ./create.sh <prefix_name>
 
 to remove :
 
-$ ./delete.js <prefix_name>
+$ ./delete.sh <prefix_name>
 
 Before run, some contents in both files need to change base on yours :
 

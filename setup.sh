@@ -46,7 +46,7 @@ npm install
 
 # Preconfig webapp
 echo Pre config webapp components
-cd webapp
+cd app
 
 # Install all components using
 bower install
