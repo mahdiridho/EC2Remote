@@ -8,7 +8,7 @@
 aws = require("aws-sdk");
 aws.config.update({
   region: "ap-northeast-1",
-  credentials: new aws.SharedIniFileCredentials({profile: "eljawir"})
+  credentials: new aws.SharedIniFileCredentials({profile: "YOUR_CREDENTIAL_PROFILE"})
 });
 cognito = new aws.CognitoIdentity();
 iam = new aws.IAM();
@@ -48,18 +48,24 @@ thumbprint=thumbprint.replace(/\n/g,'');
 cognitoParam = {
   "IdentityPoolName": prefix+"_pool",
   "AllowUnauthenticatedIdentities": true,
-  "OpenIdConnectProviderARNs": ["arn:aws:iam::355108499559:oidc-provider/mahdiridho.auth0.com"],
+  "OpenIdConnectProviderARNs": ["YOUR_OPENID_CONNECT_ARN"],
   "DeveloperProviderName": "Mahdi"
 }
 
-iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "arn:aws:iam::355108499559:oidc-provider/mahdiridho.auth0.com"}, function(err, openID) {
+/** 
+Check OpenID ARN from AWS IAM Console - Identity providers
+OPENID ARN sample : arn:aws:iam::35510xxxxxxx:oidc-provider/xxxx.auth0.com
+Auth0 Client ID sample : xxxxxNabHkQkDzxIwt4jzGHVSxxxxxxx
+Auth0 Client URL sample : https://xxxx.auth0.com
+*/
+iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "YOUR_OPENID_ARN"}, function(err, openID) {
 	if(openID){
 		return "OpenID "+openID.Url+" exists";
 	}else{
 		iam.createOpenIDConnectProvider({
-			ClientIDList: ["PNGweNabHkQkDzxIwt4jzGHVSNmUQCyR"],
+			ClientIDList: ["Auth0_Client_ID"],
 			ThumbprintList: [thumbprint],
-			Url: "https://mahdiridho.auth0.com"
+			Url: "Auth0_Client_URL"
 		}, function(err, data) {
       console.log("Try to connect OpenID with auth0");
       if (err) {
@@ -236,7 +242,7 @@ iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "arn:aws:iam::3551084995
 																		  "MaxCount": 1,
 																		  "MinCount": 1,
 																		  "InstanceType": "t2.micro",
-																		  "KeyName": "MahdiKey"
+																		  "KeyName": "FREE_KEY_NAME"
 																		}
 
 																		/* Create new EC2 instance */
@@ -264,8 +270,8 @@ iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "arn:aws:iam::3551084995
 																        	    params = {
 																					      Resources: [ec2Instance.Instances[0].InstanceId], 
 																					      Tags: [{
-																					        Key: "Name", 
-																					        Value: "MahdiServer"
+																					        Key: "FREE_TAG_KEY_NAME", 
+																					        Value: "FREE_TAG_VALUE_NAME"
 																					      }]
 																					    };
 																				      ec2.createTags(params, function(err, ec2Tag) {
