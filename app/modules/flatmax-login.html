@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+x<link rel="import" href="../bower_components/polymer/polymer.html">
 
 <style>
   .auth0-lock-header-bg {
@@ -105,8 +105,6 @@
         AWS.config.credentials.get(function(err) {
           if (err) {
             AWS.config.credentials.clearCachedId();
-            localStorage.removeItem(this.tokenStorage);
-            localStorage.removeItem(this.profileStorage);
             self.dispatchEvent(new CustomEvent('error',{detail:{error:err}}));
           }else{
             self.dispatchEvent(new CustomEvent("success"));

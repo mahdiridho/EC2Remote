@@ -8,7 +8,7 @@
 aws = require("aws-sdk");
 aws.config.update({
   region: "ap-northeast-1",
-  credentials: new aws.SharedIniFileCredentials({profile: "eljawir"})
+  credentials: new aws.SharedIniFileCredentials({profile: "YOUR_CREDENTIAL_PROFILE"})
 });
 cognito = new aws.CognitoIdentity();
 iam = new aws.IAM();
@@ -47,18 +47,18 @@ thumbprint=thumbprint.replace(/\n/g,'');
 cognitoParam = {
   "IdentityPoolName": prefix+"_pool",
   "AllowUnauthenticatedIdentities": true,
-  "OpenIdConnectProviderARNs": ["arn:aws:iam::355108499559:oidc-provider/mahdiridho.auth0.com"],
+  "OpenIdConnectProviderARNs": ["YOUR_OPENID_CONNECT_ARN"],
   "DeveloperProviderName": "Mahdi"
 }
 
-iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "arn:aws:iam::355108499559:oidc-provider/mahdiridho.auth0.com"}, function(err, openID) {
+iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "YOUR_OPENID_CONNECT_ARN"}, function(err, openID) {
 	if(openID){
 		return "OpenID "+openID.Url+" exists";
 	}else{
 		iam.createOpenIDConnectProvider({
-			ClientIDList: ["PNGweNabHkQkDzxIwt4jzGHVSNmUQCyR"],
+			ClientIDList: ["Auth0_CLIENID"],
 			ThumbprintList: [thumbprint],
-			Url: "https://mahdiridho.auth0.com"
+			Url: "Auth0_URL"
 		}, function(err, data) {
       console.log("Try to connect OpenID with auth0");
       if (err) {

@@ -29,7 +29,7 @@ function getPrefix(argsIn){
 }
 
 // Dynamic variables
-poolID = "ap-northeast-1:334b5935-c181-4381-a353-50373ad1401e";
+poolID = "COGNITO_POOL_ID";
 
 // Find the prefix or exit
 prefix=getPrefix(process.argv);
@@ -37,13 +37,13 @@ if (!prefix)
   return;
 
 /* Check OpenID Connect */
-iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "arn:aws:iam::355108499559:oidc-provider/mahdiridho.auth0.com"}, function(err, openID) {
+iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "YOUR_OPENID_CONNECT_ARN"}, function(err, openID) {
 	if(openID){
 		// delete as required
 		Q.fcall( function () {
 			/* Delete OpenID Connect */
 	    return new Promise(function tryPromise(resolve) {
-		    iam.deleteOpenIDConnectProvider({OpenIDConnectProviderArn: "arn:aws:iam::355108499559:oidc-provider/mahdiridho.auth0.com"}, function(err, data) {
+		    iam.deleteOpenIDConnectProvider({OpenIDConnectProviderArn: "YOUR_OPENID_CONNECT_ARN"}, function(err, data) {
 			    console.log("Try to delete OpenID");
 			    if (err) {
 			      setTimeout(function(){

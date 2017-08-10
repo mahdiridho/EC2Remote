@@ -48,16 +48,19 @@ Before run, some contents in both files need to change base on yours :
 
 Please read the reference to configure OpenID with Auth0 on folder AUTH0_OPENID_COGNITO
 
-* FREE_KEY_NAME / YOUR_KEY_NAME : keypair name for ec2
-* FREE_TAG_KEY_NAME : tag name
-* FREE_TAG_VALUE_NAME : tag value
-
-
 ### Running the application
 
-From local computer type the following command from the project folder :
+From project folder, run the noVNC as service :
+
+$ ./noVNC/utils/launch.sh --vnc ec2-x-x-x-x.ap-northeast-1.compute.amazonaws.com:5901
+
+Then from project folder on other command console:
 
 $ gulp
+
+![alt text](https://github.com/mahdiridho/EC2Remote/blob/master/EC2_VNC_PREINSTALL/images/noVNC.png)
+
+![alt text](https://github.com/mahdiridho/EC2Remote/blob/master/EC2_VNC_PREINSTALL/images/WebRemote.png)
 
 If you want to run on public server, just upload all files from folder "webapp" to your public server
 
