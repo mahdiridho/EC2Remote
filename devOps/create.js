@@ -8,11 +8,10 @@
 aws = require("aws-sdk");
 aws.config.update({
   region: "ap-northeast-1",
-  credentials: new aws.SharedIniFileCredentials({profile: "YOUR_CREDENTIAL_PROFILE"})
+  credentials: new aws.SharedIniFileCredentials({profile: "eljawir"})
 });
 cognito = new aws.CognitoIdentity();
 iam = new aws.IAM();
-ec2 = new aws.EC2();
 file = require("fs");
 
 function getPrefix(argsIn){
@@ -48,24 +47,18 @@ thumbprint=thumbprint.replace(/\n/g,'');
 cognitoParam = {
   "IdentityPoolName": prefix+"_pool",
   "AllowUnauthenticatedIdentities": true,
-  "OpenIdConnectProviderARNs": ["YOUR_OPENID_CONNECT_ARN"],
+  "OpenIdConnectProviderARNs": ["arn:aws:iam::355108499559:oidc-provider/mahdiridho.auth0.com"],
   "DeveloperProviderName": "Mahdi"
 }
 
-/** 
-Check OpenID ARN from AWS IAM Console - Identity providers
-OPENID ARN sample : arn:aws:iam::35510xxxxxxx:oidc-provider/xxxx.auth0.com
-Auth0 Client ID sample : xxxxxNabHkQkDzxIwt4jzGHVSxxxxxxx
-Auth0 Client URL sample : https://xxxx.auth0.com
-*/
-iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "YOUR_OPENID_ARN"}, function(err, openID) {
+iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "arn:aws:iam::355108499559:oidc-provider/mahdiridho.auth0.com"}, function(err, openID) {
 	if(openID){
 		return "OpenID "+openID.Url+" exists";
 	}else{
 		iam.createOpenIDConnectProvider({
-			ClientIDList: ["Auth0_Client_ID"],
+			ClientIDList: ["PNGweNabHkQkDzxIwt4jzGHVSNmUQCyR"],
 			ThumbprintList: [thumbprint],
-			Url: "Auth0_Client_URL"
+			Url: "https://mahdiridho.auth0.com"
 		}, function(err, data) {
       console.log("Try to connect OpenID with auth0");
       if (err) {
@@ -228,67 +221,6 @@ iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "YOUR_OPENID_ARN"}, func
 														  	console.log("Error : set cognito id");
 													    } else {
 													      console.log(data); // successful response
-
-																/* Create new key pair */
-																ec2.createKeyPair({KeyName:"MahdiKey"}, function(err, ec2Key) {
-																  console.log("Try to create New Key Pair");
-																  if (err) {
-																  	console.log("Error : create ec2 keypair");
-																  } else {
-																  	console.log(ec2Key);
-
-																  	ec2Param = {
-																		  "ImageId": "ami-785c491f",
-																		  "MaxCount": 1,
-																		  "MinCount": 1,
-																		  "InstanceType": "t2.micro",
-																		  "KeyName": "FREE_KEY_NAME"
-																		}
-
-																		/* Create new EC2 instance */
-															      ec2.runInstances(ec2Param, function(err, ec2Instance) {
-															        console.log("Try to create New Instance");
-															        if (err) {
-															        	console.log(err);
-																		  	console.log("Error : create ec2 instance");
-															        } else {
-															        	console.log("EC2 instance attributes : "+ec2Instance.Instances[0].InstanceId);
-																				updateFile("./delete.js",'InstanceId = "(.*)";',ec2Instance.Instances[0].InstanceId);
-
-															        	/* Stop EC2 Instance */
-													        	    return new Promise(function tryPromise(resolve) {
-													        	      ec2.stopInstances({InstanceIds: [ec2Instance.Instances[0].InstanceId]}, function(err, ec2Stop) {
-																		        console.log("Try to stop ec2 instance");
-																		        if (err) {
-																		          setTimeout(function(){
-																		              return tryPromise(resolve); // Loop promises when get error
-																		          },2000);
-																		        } else {
-																		        	console.log("EC2 instance stop : "+JSON.stringify(ec2Stop));
-
-																		        	/* Set ec2 tag name */
-																        	    params = {
-																					      Resources: [ec2Instance.Instances[0].InstanceId], 
-																					      Tags: [{
-																					        Key: "FREE_TAG_KEY_NAME", 
-																					        Value: "FREE_TAG_VALUE_NAME"
-																					      }]
-																					    };
-																				      ec2.createTags(params, function(err, ec2Tag) {
-																				        console.log("Try to set tag name");
-																				        if (err) {
-																							  	console.log("Error : set ec2 tag");
-																				        } else {
-																				          console.log("EC2 instance name : "+JSON.stringify(ec2Tag));
-																				        }
-																				      });
-																		        }
-																		      });
-																		    });
-															        }
-															      });
-																  }
-																});
 													    }
 													  })
 									        }

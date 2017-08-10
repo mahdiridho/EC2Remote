@@ -8,11 +8,10 @@
 aws = require("aws-sdk");
 aws.config.update({
   region: "ap-northeast-1",
-  credentials: new aws.SharedIniFileCredentials({profile: "YOUR_CREDENTIAL_PROFILE"})
+  credentials: new aws.SharedIniFileCredentials({profile: "eljawir"})
 });
 cognito = new aws.CognitoIdentity();
 iam = new aws.IAM();
-ec2 = new aws.EC2();
 Q = require("q");
 
 function getPrefix(argsIn){
@@ -30,8 +29,7 @@ function getPrefix(argsIn){
 }
 
 // Dynamic variables
-poolID = "IT_WILL_DYNAMIC_UPDATE_EVERY_AFTER_RUN_CREATE.JS";
-InstanceId = "IT_WILL_DYNAMIC_UPDATE_EVERY_AFTER_RUN_CREATE.JS";
+poolID = "ap-northeast-1:334b5935-c181-4381-a353-50373ad1401e";
 
 // Find the prefix or exit
 prefix=getPrefix(process.argv);
@@ -39,17 +37,13 @@ if (!prefix)
   return;
 
 /* Check OpenID Connect */
-/** 
-Check OpenID ARN from AWS IAM Console - Identity providers
-OPENID ARN sample : arn:aws:iam::35510xxxxxxx:oidc-provider/xxxx.auth0.com
-*/
-iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "YOUR_OPENID_ARN"}, function(err, openID) {
+iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "arn:aws:iam::355108499559:oidc-provider/mahdiridho.auth0.com"}, function(err, openID) {
 	if(openID){
 		// delete as required
 		Q.fcall( function () {
 			/* Delete OpenID Connect */
 	    return new Promise(function tryPromise(resolve) {
-		    iam.deleteOpenIDConnectProvider({OpenIDConnectProviderArn: "YOUR_OPENID_ARN"}, function(err, data) {
+		    iam.deleteOpenIDConnectProvider({OpenIDConnectProviderArn: "arn:aws:iam::355108499559:oidc-provider/mahdiridho.auth0.com"}, function(err, data) {
 			    console.log("Try to delete OpenID");
 			    if (err) {
 			      setTimeout(function(){
@@ -150,36 +144,6 @@ iam.getOpenIDConnectProvider({OpenIDConnectProviderArn: "YOUR_OPENID_ARN"}, func
 		  });
 		}).then( function (authRole) {
 			console.log(authRole);
-
-	    return new Promise(function(resolve) {
-	      ec2.deleteKeyPair({KeyName:"YOUR_KEY_NAME"}, function(err, data) {
-	        console.log("Try to delete key pair");
-	        if (err) {
-	          setTimeout(function(){
-	              return tryPromise(resolve); // Loop promises when get error
-	          },2000);
-	        } else {
-	        	return resolve(data); // successful response
-	        }
-	      });
-	    });
-		}).then( function (ec2Key) {
-			console.log(ec2Key);
-
-	    return new Promise(function tryPromise(resolve) {
-	      ec2.terminateInstances({InstanceIds: [InstanceId]}, function(err, data) {
-	        console.log("Try to delete instances");
-	        if (err) {
-	          setTimeout(function(){
-	            return tryPromise(resolve); // Loop promises when get error
-	          },2000);
-	        }else {
-	            return resolve(data);
-	        }
-	      });
-	    });
-		}).then( function (ec2Remove) {
-			console.log(ec2Remove);
 		}).fail( function (error) {
 			console.error(error);
 		});
