@@ -50,11 +50,13 @@ Please read the reference to configure OpenID with Auth0 on folder AUTH0_OPENID_
 
 ### Running the application
 
-From project folder, run the noVNC as service :
+Download noVNC from https://kanaka.github.io/noVNC/, extract and save the noVNC folder in the project directory
+
+From project directory, run the noVNC as service :
 
 $ ./noVNC/utils/launch.sh --vnc ec2-x-x-x-x.ap-northeast-1.compute.amazonaws.com:5901
 
-Then from project folder on other command console:
+Then from project directory on other command console:
 
 $ gulp
 
